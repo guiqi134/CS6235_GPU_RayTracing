@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="main.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="includes">
+      <UniqueIdentifier>{f33d1091-83fd-49e3-b995-8998a8490801}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes\vec3.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\sphere.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\ray.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\common.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\hittable.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\hittable_list.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\material.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\camera.h">
+      <Filter>includes</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

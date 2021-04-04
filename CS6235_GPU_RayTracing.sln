@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scene2_cuda", "Scene2_Cuda\Scene2_Cuda.vcxproj", "{89B27256-E281-40FB-9275-275A8AC7D713}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scene1_cuda", "scene1_cuda\scene1_cuda.vcxproj", "{F4EA7825-104D-4297-858E-A13E4E344D3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89B27256-E281-40FB-9275-275A8AC7D713}.Debug|x64.ActiveCfg = Debug|x64
+		{89B27256-E281-40FB-9275-275A8AC7D713}.Debug|x64.Build.0 = Debug|x64
+		{89B27256-E281-40FB-9275-275A8AC7D713}.Release|x64.ActiveCfg = Release|x64
+		{89B27256-E281-40FB-9275-275A8AC7D713}.Release|x64.Build.0 = Release|x64
+		{F4EA7825-104D-4297-858E-A13E4E344D3A}.Debug|x64.ActiveCfg = Debug|x64
+		{F4EA7825-104D-4297-858E-A13E4E344D3A}.Debug|x64.Build.0 = Debug|x64
+		{F4EA7825-104D-4297-858E-A13E4E344D3A}.Release|x64.ActiveCfg = Release|x64
+		{F4EA7825-104D-4297-858E-A13E4E344D3A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52770D80-F354-4A2A-9DB2-C5226857677E}
+	EndGlobalSection
+EndGlobal
