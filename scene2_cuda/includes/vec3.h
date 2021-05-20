@@ -6,8 +6,8 @@
 
 #include <iostream>
 
-using std::sqrt;
-using std::fabs;
+//using std::sqrt;
+//using std::fabs;
 
 // utility functions
 __device__ inline float random_float(curandState* state) { return curand_uniform(state); } // [0, 1]
@@ -29,7 +29,7 @@ public:
 
     __host__ __device__ float length() const
     {
-        return sqrt(length_squared());
+        return sqrtf(length_squared());
     }
 
     __host__ __device__ float length_squared() const
@@ -41,7 +41,7 @@ public:
     __host__ __device__ bool near_zero() const
     {
         const auto s = 1e-8;
-        return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+        return (fabsf(e[0]) < s) && (fabsf(e[1]) < s) && (fabsf(e[2]) < s);
     }
 
     __device__ inline static vec3 random(curandState* state)
@@ -52,7 +52,7 @@ public:
     __device__ inline static vec3 random(curandState* state, float min, float max)
     {
         return vec3(random_float(state, min, max), random_float(state, min, max), random_float(state, min, max));
-    }
+    } 
 
     // operator overload
     __host__ __device__ vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }

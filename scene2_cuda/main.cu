@@ -15,6 +15,8 @@ const size_t IMAGE_WIDTH = 1200;
 const size_t IMAGE_HEIGHT = 800;
 const bool OUTPUT = true;
 
+//__constant__ hittable_list* d_const_world;
+
 // val -> the return value of CUDA calls
 #define checkCudaError(val) checkError( (val), #val)
 void checkError(cudaError_t result, const char* func)
@@ -33,10 +35,11 @@ __device__ color rayColor(const ray& r, hittable** d_world, curandState* state, 
 {
 	ray currentRay = r;
 	color currentAttenuation = color(1.0f, 1.0f, 1.0f);
+	hittable* objects = *d_world;
 	for (int i = 0; i < maxDepth; i++)
 	{
 		hitRecord rec;
-		if ((*d_world)->hit(currentRay, 0.001, FLT_MAX, rec))
+		if (objects->hit(currentRay, 0.001f, FLT_MAX, rec))
 		{
 			ray scattered;
 			color attenuation;
@@ -69,17 +72,18 @@ __global__ void render(color* framebuffer, int width, int height, int samplesPer
 
 	int index = j * width + i;
 
-	// construct the ray
 	color pixelColor(0.0f, 0.0f, 0.0f);
+	curandState local_state = state[index];
+	// construct the ray
 	for (int s = 0; s < samplesPerPixel; s++)
 	{
-		float u = float((i + random_float(&state[index]))) / float(width - 1);
-		float v = float((j + random_float(&state[index]))) / float(height - 1);
-		ray r = (*d_camera)->get_ray(u, v, &state[index]);
-		pixelColor += rayColor(r, d_world, &state[index], maxDepth);
+		float u = float((i + random_float(&local_state))) / float(width - 1);
+		float v = float((j + random_float(&local_state))) / float(height - 1);
+		ray r = (*d_camera)->get_ray(u, v, &local_state);
+		pixelColor += rayColor(r, d_world, &local_state, maxDepth);
 	}
+	state[index] = local_state;
 	pixelColor /= samplesPerPixel;
-
 
 	// gamma correction = 2.0f
 	pixelColor[0] = sqrtf(pixelColor[0]);
@@ -106,7 +110,7 @@ __global__ void randInit(curandState* state)
 
 __global__ void randomScene(hittable** d_world, hittable** d_objects, camera** d_camera, curandState* state)
 {
-	material* materialGround = new lambertian(color(0.5, 0.5, 0.5));
+	material* materialGround = new lambertian(color(0.5f, 0.5f, 0.5f));
 	d_objects[0] = new sphere(point3(0, -1000, 0), 1000, materialGround);
 	int index = 1;
 
@@ -116,26 +120,26 @@ __global__ void randomScene(hittable** d_world, hittable** d_objects, camera** d
 		for (int b = -11; b < 11; b++, index++)
 		{
 			float material = random_float(state);
-			point3 center(a + 0.9 * random_float(state), 0.2, b + 0.9 * random_float(state));
+			point3 center(a + 0.9f * random_float(state), 0.2f, b + 0.9f * random_float(state));
 
 			color albedo;
-			if (material < 0.8)
+			if (material < 0.8f)
 			{
 				// diffuse
 				albedo = color::random(state) * color::random(state);
-				d_objects[index] = new sphere(center, 0.2, new lambertian(albedo));
+				d_objects[index] = new sphere(center, 0.2f, new lambertian(albedo));
 			}
-			else if (material < 0.95)
+			else if (material < 0.95f)
 			{
 				// metal
-				albedo = color::random(state, 0.5, 1);
-				float fuzz = random_float(state, 0.5, 1);
-				d_objects[index] = new sphere(center, 0.2, new metal(albedo, fuzz));
+				albedo = color::random(state, 0.5f, 1.0f);
+				float fuzz = random_float(state, 0.5f, 1.0f);
+				d_objects[index] = new sphere(center, 0.2f, new metal(albedo, fuzz));
 			}
 			else
 			{
 				// glass
-				d_objects[index] = new sphere(center, 0.2, new dielectric(1.5));
+				d_objects[index] = new sphere(center, 0.2f, new dielectric(1.5f));
 			}
 		}
 	}
@@ -153,7 +157,7 @@ __global__ void randomScene(hittable** d_world, hittable** d_objects, camera** d
 	vec3 vup(0, 1, 0);
 	float dist_to_focus = 10.0;
 	float aperture = 0.1;
-	*d_camera = new camera(lookfrom, lookat, vup, 35, 4.0f / 3.0f, aperture, dist_to_focus);
+	*d_camera = new camera(lookfrom, lookat, vup, 35, 3.0f / 2.0f, aperture, dist_to_focus);
 }
 
 __global__ void createWorld(hittable** d_world, hittable** d_objects, camera** d_camera, int numObjects)
@@ -225,6 +229,9 @@ int main(int argc, char* args[])
 	checkCudaError(cudaMalloc((void**)&d_world, d_worldSize));
 	hittable** d_objects;
 	size_t d_objectsSize = numObjects * sizeof(hittable*);
+	cerr << "d_objectsSize = " << d_objectsSize << endl;
+	cerr << "d_worldSize = " << d_worldSize << endl;
+	cerr << "size of d_state = " << num_pixels * sizeof(curandState) << endl;
 	checkCudaError(cudaMalloc((void**)&d_objects, d_objectsSize));
 
 	// setup random state for randomScene
@@ -237,8 +244,12 @@ int main(int argc, char* args[])
 	checkCudaError(cudaGetLastError());
 	checkCudaError(cudaDeviceSynchronize());
 
+	//checkCudaError(cudaMemcpyToSymbol("d_const_world", *d_world, sizeof(hittable_list), 0, cudaMemcpyDeviceToDevice));
+
 	// configure parameters
-	int blockDimX = 8, blockDimY = 8;
+	// 30 * 20 is the best
+	// 32 * 32 the worst
+	int blockDimX = 30, blockDimY = 20;
 	dim3 dimBlock(blockDimX, blockDimY);
 	dim3 dimGrid((IMAGE_WIDTH + blockDimX - 1) / blockDimX, (IMAGE_HEIGHT + blockDimY - 1) / blockDimY);
 

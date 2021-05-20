@@ -73,10 +73,10 @@ public:
         float refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
         vec3 unit_direction = unit_vector(r_in.direction());
-        float cos_theta = fminf(dot(-unit_direction, rec.normal), 1.0);
-        float sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+        float cos_theta = fminf(dot(-unit_direction, rec.normal), 1.0f);
+        float sin_theta = sqrt(1.0f - cos_theta * cos_theta);
 
-        bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+        bool cannot_refract = refraction_ratio * sin_theta > 1.0f;
         vec3 direction;
         if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float(state))
             direction = reflect(unit_direction, rec.normal);
