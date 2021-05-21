@@ -6,7 +6,7 @@ It results in a 17.4x speed up. And the optimized version further results in a 2
   
 The configurations used to render the final image are: 1200*800 resolution, 200 samples per pixel, 50 ray bounces.
   
-Project report: [Google Doc](https://docs.google.com/document/d/1Vn1uWVYVuFz_-aaSXAt4Z4GZcK2T2EoMx00ITAH-ADI/edit)
+Project report: [Google Doc Link](https://docs.google.com/document/d/1Vn1uWVYVuFz_-aaSXAt4Z4GZcK2T2EoMx00ITAH-ADI/edit)
 
 # Gallary 
 ![alt text](https://github.com/guiqi134/CS6235_GPU_RayTracing/blob/master/oneWeekendScene_Cuda.png?raw=true)
