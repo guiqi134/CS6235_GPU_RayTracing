@@ -10,6 +10,3 @@ Project report: [Google Doc Link](https://docs.google.com/document/d/1Vn1uWVYVuF
 
 # Poster
 ![alt text](https://github.com/guiqi134/CS6235_GPU_RayTracing/blob/master/CS6235_Poster.png?raw=true)
-
-# Gallary 
-![alt text](https://github.com/guiqi134/CS6235_GPU_RayTracing/blob/master/oneWeekendScene_Cuda.png?raw=true)
