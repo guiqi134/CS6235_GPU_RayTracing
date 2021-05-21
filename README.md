@@ -7,4 +7,4 @@ It results in a 17.4x speed up. And the optimized version further results in a 2
 Project report: [Google Doc](https://docs.google.com/document/d/1Vn1uWVYVuFz_-aaSXAt4Z4GZcK2T2EoMx00ITAH-ADI/edit)
 
 # Gallary 
-[Contribution guidelines for this project](docs/CONTRIBUTING.md)
+[](oneWeekendScene_Cuda.png)
